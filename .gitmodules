@@ -1,0 +1,3 @@
+[submodule "api/hello"]
+	path = api/hello
+	url = https://github.com/go-sweets/hello-proto.git
