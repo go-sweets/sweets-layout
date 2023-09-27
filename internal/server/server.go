@@ -3,9 +3,9 @@ package server
 import (
 	"net/http"
 
+	"github.com/go-sweets/sweets-layout/internal/service"
+	"github.com/go-sweets/sweets-layout/internal/svc"
 	"github.com/google/wire"
-	"github.com/mix-plus/go-mixplus/layout/internal/service"
-	"github.com/mix-plus/go-mixplus/layout/internal/svc"
 	"github.com/zeromicro/go-zero/zrpc"
 )
 

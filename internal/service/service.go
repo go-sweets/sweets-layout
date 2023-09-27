@@ -1,8 +1,8 @@
 package service
 
 import (
+	"github.com/go-sweets/sweets-layout/internal/boundedcontexts/hello"
 	"github.com/google/wire"
-	"github.com/mix-plus/go-mixplus/layout/internal/boundedcontexts/hello"
 )
 
 // ProviderSet is server providers.

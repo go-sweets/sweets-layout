@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 
-	"github.com/mix-plus/go-mixplus/layout/internal/config"
-	"github.com/mix-plus/go-mixplus/layout/internal/db/migrations"
+	"github.com/go-sweets/sweets-layout/internal/config"
+	"github.com/go-sweets/sweets-layout/internal/db/migrations"
 	"github.com/mix-plus/go-mixplus/pkg/conf"
 	"github.com/mix-plus/go-mixplus/pkg/migrate"
 	"github.com/zeromicro/go-zero/core/logx"

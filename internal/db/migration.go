@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"time"
 
+	"github.com/go-sweets/sweets-layout/internal/db/migrations"
+	"github.com/go-sweets/sweets-layout/internal/svc"
 	"github.com/google/wire"
-	"github.com/mix-plus/go-mixplus/layout/internal/db/migrations"
-	"github.com/mix-plus/go-mixplus/layout/internal/svc"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 

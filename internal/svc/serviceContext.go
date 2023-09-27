@@ -1,8 +1,8 @@
 package svc
 
 import (
+	"github.com/go-sweets/sweets-layout/internal/config"
 	"github.com/google/wire"
-	"github.com/mix-plus/go-mixplus/layout/internal/config"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

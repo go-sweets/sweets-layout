@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"github.com/mix-plus/go-mixplus/layout/internal/boundedcontexts/hello/domain/entities"
-	"github.com/mix-plus/go-mixplus/layout/internal/svc"
+	"github.com/go-sweets/sweets-layout/internal/boundedcontexts/hello/domain/entities"
+	"github.com/go-sweets/sweets-layout/internal/svc"
 )
 
 type HelloRepository struct {

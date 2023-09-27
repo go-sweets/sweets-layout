@@ -1,4 +1,4 @@
-module github.com/mix-plus/go-mixplus/layout
+module github.com/go-sweets/sweets-layout
 
 go 1.18
 

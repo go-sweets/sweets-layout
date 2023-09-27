@@ -1,11 +1,11 @@
 package server
 
 import (
-	"github.com/mix-plus/go-mixplus/layout/api/hello"
-	"github.com/mix-plus/go-mixplus/layout/internal/boundedcontexts/hello/application/handlers"
-	"github.com/mix-plus/go-mixplus/layout/internal/config"
-	"github.com/mix-plus/go-mixplus/layout/internal/service"
-	"github.com/mix-plus/go-mixplus/layout/internal/svc"
+	"github.com/go-sweets/sweets-layout/api/hello"
+	"github.com/go-sweets/sweets-layout/internal/boundedcontexts/hello/application/handlers"
+	"github.com/go-sweets/sweets-layout/internal/config"
+	"github.com/go-sweets/sweets-layout/internal/service"
+	"github.com/go-sweets/sweets-layout/internal/svc"
 	service2 "github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"

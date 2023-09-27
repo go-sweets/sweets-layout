@@ -4,10 +4,10 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/go-sweets/sweets-layout/api/hello"
+	"github.com/go-sweets/sweets-layout/internal/config"
+	"github.com/go-sweets/sweets-layout/internal/service"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	"github.com/mix-plus/go-mixplus/layout/api/hello"
-	"github.com/mix-plus/go-mixplus/layout/internal/config"
-	"github.com/mix-plus/go-mixplus/layout/internal/service"
 )
 
 func NewHttpServer(c *config.Config, srv *service.HelloService) *http.Server {

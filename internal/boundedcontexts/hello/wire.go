@@ -1,10 +1,10 @@
 package hello
 
 import (
-	"github.com/mix-plus/go-mixplus/layout/internal/boundedcontexts/hello/application/handlers"
-	"github.com/mix-plus/go-mixplus/layout/internal/boundedcontexts/hello/domain/repositories"
-	repositories2 "github.com/mix-plus/go-mixplus/layout/internal/boundedcontexts/hello/infrastructure/repositories"
-	"github.com/mix-plus/go-mixplus/layout/internal/svc"
+	"github.com/go-sweets/sweets-layout/internal/boundedcontexts/hello/application/handlers"
+	"github.com/go-sweets/sweets-layout/internal/boundedcontexts/hello/domain/repositories"
+	repositories2 "github.com/go-sweets/sweets-layout/internal/boundedcontexts/hello/infrastructure/repositories"
+	"github.com/go-sweets/sweets-layout/internal/svc"
 )
 
 func InjectHelloRepository(svc *svc.ServiceContext) repositories.IHelloRepository {

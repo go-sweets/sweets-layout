@@ -7,12 +7,12 @@
 package main
 
 import (
-	"github.com/mix-plus/go-mixplus/layout/internal/boundedcontexts/hello"
-	"github.com/mix-plus/go-mixplus/layout/internal/config"
-	"github.com/mix-plus/go-mixplus/layout/internal/db"
-	"github.com/mix-plus/go-mixplus/layout/internal/server"
-	"github.com/mix-plus/go-mixplus/layout/internal/service"
-	"github.com/mix-plus/go-mixplus/layout/internal/svc"
+	"github.com/go-sweets/sweets-layout/internal/boundedcontexts/hello"
+	"github.com/go-sweets/sweets-layout/internal/config"
+	"github.com/go-sweets/sweets-layout/internal/db"
+	"github.com/go-sweets/sweets-layout/internal/server"
+	"github.com/go-sweets/sweets-layout/internal/service"
+	"github.com/go-sweets/sweets-layout/internal/svc"
 )
 
 // Injectors from wire.go:
