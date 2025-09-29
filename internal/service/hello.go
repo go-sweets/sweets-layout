@@ -3,32 +3,30 @@ package service
 import (
 	"context"
 
-	"github.com/go-sweets/sweets-layout/api/hello"
 	"github.com/go-sweets/sweets-layout/internal/boundedcontexts/hello/application/handlers"
-	"github.com/go-sweets/sweets-layout/internal/svc"
+	hello_kitex "github.com/go-sweets/sweets-layout/api/gen/kitex/api/hello"
 )
 
+// HelloService acts as a service layer that delegates to handlers
 type HelloService struct {
-	hello.UnimplementedHelloServer
-
-	svcCtx       *svc.ServiceContext
 	helloHandler *handlers.HelloGrpcHandler
 }
 
-func NewHelloServer(ctx *svc.ServiceContext,
-	helloHandler *handlers.HelloGrpcHandler,
-) *HelloService {
+// NewHelloService creates a new HelloService that delegates to handlers
+func NewHelloService(helloHandler *handlers.HelloGrpcHandler) *HelloService {
 	return &HelloService{
-		svcCtx:       ctx,
 		helloHandler: helloHandler,
 	}
 }
 
-func (service *HelloService) SayHello(ctx context.Context, in *hello.HelloReq) (*hello.HelloResp, error) {
-	resp, err := service.helloHandler.SayHello(ctx, in)
-	if err != nil {
-		return nil, err
-	}
+// SayHello delegates to the gRPC handler for Kitex service
+func (service *HelloService) SayHello(ctx context.Context, req *hello_kitex.HelloReq) (*hello_kitex.HelloResp, error) {
+	// Directly delegate to the handler's gRPC method
+	return service.helloHandler.SayHello(ctx, req)
+}
 
-	return resp, nil
+// SayHelloHTTP delegates to the handler's HTTP method
+func (service *HelloService) SayHelloHTTP(ctx context.Context, req *handlers.HelloRequest) (*handlers.HelloResponse, error) {
+	// Directly delegate to the handler's HTTP method
+	return service.helloHandler.SayHelloHTTP(ctx, req)
 }
