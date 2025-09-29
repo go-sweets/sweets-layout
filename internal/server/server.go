@@ -1,44 +1,63 @@
 package server
 
 import (
-	"net/http"
+	"context"
+	"fmt"
 
-	"github.com/go-sweets/sweets-layout/internal/service"
-	"github.com/go-sweets/sweets-layout/internal/svc"
+	hertz_server "github.com/cloudwego/hertz/pkg/app/server"
+	kitex_server "github.com/cloudwego/kitex/server"
+	"github.com/go-sweets/sweets-layout/internal/config"
+	"github.com/go-sweets/sweets-layout/internal/di/providers"
 	"github.com/google/wire"
-	"github.com/zeromicro/go-zero/zrpc"
 )
 
 // ProviderSet is server providers.
-var ProviderSet = wire.NewSet(NewGrpcServer, NewHttpServer)
+var ProviderSet = wire.NewSet(NewHertzServer, NewKitexServer, NewApp)
 
+// AppServer represents the application server with both HTTP and RPC servers
 type AppServer struct {
-	SvcCtx     *svc.ServiceContext
-	HTTPServer *http.Server
-	GrpcServer *zrpc.RpcServer
-
-	HelloService *service.HelloService
+	Config          *config.Config
+	HertzServer     *hertz_server.Hertz
+	KitexServer     kitex_server.Server
+	ServiceRegistrar *providers.ServiceRegistrar
 }
 
-func NewApp(svcCtx *svc.ServiceContext, helloService *service.HelloService, hs *http.Server, gs *zrpc.RpcServer) (*AppServer, error) {
+// NewApp creates a new AppServer instance
+func NewApp(config *config.Config, registrar *providers.ServiceRegistrar, hs *hertz_server.Hertz, ks kitex_server.Server) (*AppServer, error) {
 	return &AppServer{
-		SvcCtx:       svcCtx,
-		HelloService: helloService,
-		HTTPServer:   hs,
-		GrpcServer:   gs,
+		Config:          config,
+		ServiceRegistrar: registrar,
+		HertzServer:     hs,
+		KitexServer:     ks,
 	}, nil
 }
 
-func (a *AppServer) Run() {
-
+// Run starts both the HTTP and RPC servers
+func (a *AppServer) Run() error {
+	// Start Hertz HTTP server in goroutine
 	go func() {
-		err := a.HTTPServer.ListenAndServe()
-		if err != nil {
-			panic(err)
-		}
+		httpAddr := fmt.Sprintf(":%d", a.Config.Server.HTTPPort)
+		fmt.Printf("Starting Hertz HTTP server on %s\n", httpAddr)
+		a.HertzServer.Spin()
 	}()
 
-	a.GrpcServer.Start()
+	// Start Kitex RPC server (blocking)
+	rpcAddr := fmt.Sprintf(":%d", a.Config.Server.RPCPort)
+	fmt.Printf("Starting Kitex RPC server on %s\n", rpcAddr)
+	return a.KitexServer.Run()
+}
 
-	defer a.GrpcServer.Stop()
+// Stop gracefully stops both servers
+func (a *AppServer) Stop() error {
+	// Stop servers gracefully
+	ctx := context.Background()
+	if err := a.HertzServer.Shutdown(ctx); err != nil {
+		return fmt.Errorf("failed to shutdown Hertz server: %w", err)
+	}
+
+	if err := a.KitexServer.Stop(); err != nil {
+		return fmt.Errorf("failed to stop Kitex server: %w", err)
+	}
+
+	return nil
 }

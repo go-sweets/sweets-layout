@@ -1,0 +1,32 @@
+version: v1
+plugins:
+  # Standard protobuf Go code
+  - plugin: go
+    out: gen/go
+    opt:
+      - paths=source_relative
+
+  # gRPC Go code
+  - plugin: go-grpc
+    out: gen/go
+    opt:
+      - paths=source_relative
+
+  # Validation code
+  - plugin: buf.build/bufbuild/validate-go
+    out: gen/go
+    opt:
+      - paths=source_relative
+
+  # gRPC Gateway (for HTTP API)
+  - plugin: grpc-gateway
+    out: gen/go
+    opt:
+      - paths=source_relative
+      - generate_unbound_methods=true
+
+  # OpenAPI documentation
+  - plugin: openapi
+    out: .
+    opt:
+      - paths=source_relative

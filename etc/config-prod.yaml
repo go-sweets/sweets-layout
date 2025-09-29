@@ -1,0 +1,67 @@
+# Production Environment Configuration
+server:
+  http_port: ${HTTP_PORT:8080}
+  rpc_port: ${RPC_PORT:9090}
+  mode: prod
+  read_timeout: 30s
+  write_timeout: 30s
+  idle_timeout: 300s
+  max_conns: ${MAX_CONNS:10000}
+  debug: false
+
+database:
+  driver: mysql
+  dsn: ${DB_DSN}
+  auto_migrate: false
+  max_open_conns: ${DB_MAX_OPEN_CONNS:100}
+  max_idle_conns: ${DB_MAX_IDLE_CONNS:50}
+  conn_max_lifetime: ${DB_CONN_MAX_LIFETIME:3600s}
+  log_level: error
+
+redis:
+  addr: ${REDIS_ADDR}
+  password: ${REDIS_PASSWORD}
+  db: ${REDIS_DB:0}
+  pool_size: ${REDIS_POOL_SIZE:50}
+  min_idle_conns: ${REDIS_MIN_IDLE_CONNS:10}
+  dial_timeout: ${REDIS_DIAL_TIMEOUT:5s}
+  read_timeout: ${REDIS_READ_TIMEOUT:3s}
+  write_timeout: ${REDIS_WRITE_TIMEOUT:3s}
+
+log:
+  level: ${LOG_LEVEL:info}
+  format: json
+  output: ${LOG_OUTPUT:file}
+  file_path: ${LOG_FILE_PATH:/var/log/sweets-app.log}
+  max_size: ${LOG_MAX_SIZE:100}
+  max_age: ${LOG_MAX_AGE:30}
+  max_backups: ${LOG_MAX_BACKUPS:10}
+  compress: true
+
+cache:
+  default_expiration: ${CACHE_DEFAULT_EXPIRATION:300s}
+  cleanup_interval: ${CACHE_CLEANUP_INTERVAL:600s}
+  redis_cluster: ${REDIS_CLUSTER:true}
+
+monitoring:
+  enable_metrics: ${ENABLE_METRICS:true}
+  enable_tracing: ${ENABLE_TRACING:true}
+  enable_profiling: ${ENABLE_PROFILING:false}
+  metrics_port: ${METRICS_PORT:9091}
+  jaeger_endpoint: ${JAEGER_ENDPOINT}
+  prometheus_endpoint: ${PROMETHEUS_ENDPOINT}
+  
+feature_flags:
+  enable_cache: ${ENABLE_CACHE:true}
+  enable_compression: ${ENABLE_COMPRESSION:true}
+  enable_rate_limiting: ${ENABLE_RATE_LIMITING:true}
+  enable_circuit_breaker: ${ENABLE_CIRCUIT_BREAKER:true}
+
+security:
+  enable_cors: ${ENABLE_CORS:true}
+  cors_origins: ${CORS_ORIGINS:*}
+  enable_jwt: ${ENABLE_JWT:true}
+  jwt_secret: ${JWT_SECRET}
+  jwt_expiration: ${JWT_EXPIRATION:24h}
+  rate_limit_requests: ${RATE_LIMIT_REQUESTS:1000}
+  rate_limit_duration: ${RATE_LIMIT_DURATION:1h}

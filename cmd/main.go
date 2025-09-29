@@ -2,12 +2,13 @@ package main
 
 import (
 	"flag"
+	"fmt"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/go-sweets/sweets-layout/internal/config"
-	"github.com/go-sweets/sweets-layout/internal/db/migrations"
-	"github.com/mix-plus/go-mixplus/pkg/conf"
-	"github.com/mix-plus/go-mixplus/pkg/migrate"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var configFile = flag.String("f", "etc/config.yaml", "the config file")
@@ -15,26 +16,34 @@ var configFile = flag.String("f", "etc/config.yaml", "the config file")
 func main() {
 	flag.Parse()
 
-	var c config.Config
-
-	if err := conf.MustLoad(*configFile, &c); err != nil {
-		panic(err)
-	}
-
-	// sql migration
-	err := migrate.RunMigration(c.DSN, migrations.Fs)
+	// Load configuration
+	c, err := config.LoadConfig(*configFile)
 	if err != nil {
-		logx.Errorf("Exec Sql Migration error:%v", err)
-	}
-	// data migration
-	err = wireMigrate(&c).Migrate()
-	if err != nil {
-		logx.Errorf("Exec Data Migration error:%v", err)
-	}
-	app, err := initApp(&c)
-	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to load config: %v", err)
 	}
 
-	app.Run()
+	// Initialize application with Wire
+	app, err := initApp(c)
+	if err != nil {
+		log.Fatalf("Failed to initialize app: %v", err)
+	}
+
+	// Handle graceful shutdown
+	go func() {
+		sigCh := make(chan os.Signal, 1)
+		signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
+		<-sigCh
+
+		log.Println("Shutting down gracefully...")
+		if err := app.Stop(); err != nil {
+			log.Printf("Error during shutdown: %v", err)
+		}
+		os.Exit(0)
+	}()
+
+	// Start the application
+	fmt.Printf("Starting CloudWeGo application...\n")
+	if err := app.Run(); err != nil {
+		log.Fatalf("Application failed: %v", err)
+	}
 }

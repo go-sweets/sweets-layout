@@ -15,8 +15,7 @@ paths:
                 - name: id
                   in: query
                   schema:
-                    type: integer
-                    format: int64
+                    type: string
             responses:
                 "200":
                     description: OK
@@ -44,8 +43,7 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
-                    format: int64
+                    type: string
                 message:
                     type: string
         Status:
