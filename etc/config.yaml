@@ -1,22 +1,20 @@
-DbConf:
-  DSN: root:passwd@tcp(127.0.0.1:33060)/test_db?charset=utf8&loc=Asia%2FShanghai&parseTime=true&timeout=10s
+server:
+  http_port: 8080
+  rpc_port: 9090
+  mode: dev
 
-RedisConf:
-  Addr: 127.0.0.1:6379
-  Pass:
-  DataBase: 0
-  Timeout: 60
+database:
+  driver: mysql
+  dsn: root:passwd@tcp(127.0.0.1:33060)/test_db?charset=utf8mb4&parseTime=True&loc=Local
+  auto_migrate: true
 
-RpcServerConf:
-  Name: hello-rpc
-  Addr: "localhost:8081"
-  Timeout: 2000
-  Mode: dev
+redis:
+  addr: 127.0.0.1:6379
+  password: ""
+  db: 0
 
-HttpServerConf:
-  Name: hello-http
-  Addr: "localhost:8082"
-  Timeout: 2000
-  Mode: dev
+log:
+  level: info
+  format: json
 
 

@@ -18,3 +18,22 @@ Thumbs.db
 .env
 
 dist/
+
+# Generated code
+api/gen/
+kitex_gen/
+
+# Binary files
+bin/
+sweets-app
+http
+rpc
+test-build
+*.exe
+*.test
+*.out
+
+# Temp files
+*.tmp
+*.log
+app.log

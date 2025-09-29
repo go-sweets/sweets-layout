@@ -1,0 +1,55 @@
+# Development Environment Configuration
+server:
+  http_port: 8080
+  rpc_port: 9090
+  mode: dev
+  read_timeout: 60s
+  write_timeout: 60s
+  idle_timeout: 120s
+  max_conns: 1000
+  debug: true
+
+database:
+  driver: mysql
+  dsn: ${DB_DSN:root:passwd@tcp(127.0.0.1:33060)/test_db?charset=utf8mb4&parseTime=True&loc=Local}
+  auto_migrate: true
+  max_open_conns: 10
+  max_idle_conns: 5
+  conn_max_lifetime: 300s
+  log_level: info
+
+redis:
+  addr: ${REDIS_ADDR:127.0.0.1:6379}
+  password: ${REDIS_PASSWORD:}
+  db: ${REDIS_DB:0}
+  pool_size: 10
+  min_idle_conns: 5
+  dial_timeout: 5s
+  read_timeout: 3s
+  write_timeout: 3s
+
+log:
+  level: debug
+  format: text
+  output: stdout
+  max_size: 100
+  max_age: 7
+  max_backups: 10
+  compress: false
+
+cache:
+  default_expiration: 300s
+  cleanup_interval: 600s
+  redis_cluster: false
+
+monitoring:
+  enable_metrics: true
+  enable_tracing: true
+  enable_profiling: true
+  metrics_port: 9091
+  
+feature_flags:
+  enable_cache: true
+  enable_compression: true
+  enable_rate_limiting: false
+  enable_circuit_breaker: false
