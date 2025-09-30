@@ -1,85 +1,87 @@
-# Sweets Layout - DDD微服务脚手架
+[中文文档](./README_zh.md) | **English**
 
-一个基于领域驱动设计(DDD)的Go微服务脚手架，使用CloudWeGo框架构建，支持gRPC和HTTP双协议。
+# Sweets Layout - DDD Microservice Scaffold
 
-## 快速开始
+A Go microservice scaffold based on Domain-Driven Design (DDD), built with CloudWeGo framework, supporting both gRPC and HTTP protocols.
 
-### 1. 安装依赖
+## Quick Start
+
+### 1. Install Dependencies
 
 ```bash
 make init
 ```
 
-### 2. 生成代码
+### 2. Generate Code
 
 ```bash
-# 生成Protocol Buffer代码
+# Generate Protocol Buffer code
 make api
 
-# 生成依赖注入代码
+# Generate dependency injection code
 make gen
 ```
 
-### 3. 运行服务
+### 3. Run Service
 
 ```bash
-# 开发模式
+# Development mode
 make run
 
-# 或者直接运行
+# Or run directly
 go run ./cmd
 ```
 
-服务将在以下端口启动：
-- gRPC: 8888
-- HTTP: 8080
+Services will start on:
+- HTTP: 8080 (Hertz)
+- RPC: 9090 (Kitex)
 
-### 4. 测试接口
+### 4. Test Endpoints
 
 ```bash
-# HTTP请求
+# HTTP request
 curl http://localhost:8080/hello/1
 
-# gRPC请求 (使用grpcurl)
-grpcurl -plaintext localhost:8888 api.hello.Hello/SayHello
+# gRPC request (using grpcurl)
+grpcurl -plaintext localhost:9090 api.hello.Hello/SayHello
 ```
 
-## 架构设计
+## Architecture
 
-本脚手架遵循DDD领域驱动设计，采用清晰的分层架构：
+This scaffold follows Domain-Driven Design (DDD) with clean layered architecture:
 
 ```
 internal/
-├── boundedcontexts/          # 限界上下文（业务领域）
-│   └── hello/                # Hello领域
-│       ├── domain/           # 领域层：业务规则
-│       │   ├── entities/     # 实体：业务对象
-│       │   └── repositories/ # 仓储接口：数据访问约定
-│       ├── application/      # 应用层：业务流程
-│       │   └── handlers/     # 处理器：协调业务逻辑
-│       └── infrastructure/   # 基础设施层：技术实现
-│           └── repositories/ # 仓储实现：数据库操作
-├── di/                       # 依赖注入
-│   └── providers/           # Wire提供者
-├── server/                  # 服务器配置
-└── service/                 # 服务注册（纯委托层）
+├── boundedcontexts/          # Bounded contexts (business domains)
+│   └── hello/                # Hello domain
+│       ├── domain/           # Domain layer: business rules
+│       │   ├── entities/     # Entities: business objects
+│       │   └── repositories/ # Repository interfaces: data access contracts
+│       ├── application/      # Application layer: business workflows
+│       │   └── handlers/     # Handlers: coordinate business logic
+│       └── infrastructure/   # Infrastructure layer: technical implementations
+│           └── repositories/ # Repository implementations: database operations
+├── di/                       # Dependency injection
+│   └── providers/           # Wire providers
+├── server/                  # Server configuration
+└── service/                 # Service registration (delegation layer)
 ```
 
-### 核心概念
+### Core Concepts
 
-1. **限界上下文(Bounded Context)**: 每个业务领域独立组织，互不干扰
-2. **领域实体(Entity)**: 包含业务规则和验证逻辑的核心对象
-3. **仓储模式(Repository)**: 数据访问的抽象接口，领域层不依赖具体实现
-4. **处理器(Handler)**: HTTP和gRPC共享的业务逻辑处理
-5. **依赖注入(DI)**: 使用Google Wire自动管理依赖关系
+1. **Bounded Context**: Each business domain is independently organized
+2. **Domain Entity**: Core objects containing business rules and validation logic
+3. **Repository Pattern**: Abstract interface for data access, domain layer doesn't depend on implementations
+4. **Handler**: Shared business logic for both HTTP and gRPC
+5. **Dependency Injection (DI)**: Using Google Wire for automatic dependency management
 
-## 开发指南
+## Development Guide
 
-### 添加新功能
+### Adding New Features
 
-以添加用户注册功能为例：
+Example: Adding user registration feature
 
-#### 1. 定义领域实体
+#### 1. Define Domain Entity
 
 ```go
 // internal/boundedcontexts/hello/domain/entities/user.go
@@ -90,7 +92,7 @@ type User struct {
 }
 
 func NewUser(email, nickname string) (*User, error) {
-    // 业务验证逻辑
+    // Business validation logic
     if !isValidEmail(email) {
         return nil, errors.New("invalid email")
     }
@@ -102,7 +104,7 @@ func NewUser(email, nickname string) (*User, error) {
 }
 ```
 
-#### 2. 定义仓储接口
+#### 2. Define Repository Interface
 
 ```go
 // internal/boundedcontexts/hello/domain/repositories/user_repository.go
@@ -112,7 +114,7 @@ type UserRepository interface {
 }
 ```
 
-#### 3. 实现仓储
+#### 3. Implement Repository
 
 ```go
 // internal/boundedcontexts/hello/infrastructure/repositories/user_repository.go
@@ -125,7 +127,7 @@ func (r *UserRepository) Save(ctx context.Context, user *entities.User) error {
 }
 ```
 
-#### 4. 创建处理器
+#### 4. Create Handler
 
 ```go
 // internal/boundedcontexts/hello/application/handlers/user_handler.go
@@ -134,19 +136,19 @@ type UserHandler struct {
 }
 
 func (h *UserHandler) Register(ctx context.Context, req *RegisterRequest) (*RegisterResponse, error) {
-    // 检查用户是否已存在
+    // Check if user already exists
     existing, _ := h.repo.FindByEmail(ctx, req.Email)
     if existing != nil {
         return nil, errors.New("user already exists")
     }
 
-    // 创建新用户
+    // Create new user
     user, err := entities.NewUser(req.Email, req.Nickname)
     if err != nil {
         return nil, err
     }
 
-    // 保存到数据库
+    // Save to database
     if err := h.repo.Save(ctx, user); err != nil {
         return nil, err
     }
@@ -155,7 +157,7 @@ func (h *UserHandler) Register(ctx context.Context, req *RegisterRequest) (*Regi
 }
 ```
 
-#### 5. 配置依赖注入
+#### 5. Configure Dependency Injection
 
 ```go
 // internal/di/providers/hello/hello_provider.go
@@ -165,18 +167,18 @@ var HelloProviderSet = wire.NewSet(
 )
 ```
 
-#### 6. 注册服务
+#### 6. Register Service
 
-在service层添加对应的服务方法，简单委托给handler处理。
+Add corresponding service methods in the service layer, simply delegate to handlers.
 
-### 添加新的限界上下文
+### Adding New Bounded Context
 
-创建新的业务领域时：
+When creating a new business domain:
 
 ```bash
 internal/boundedcontexts/
-├── hello/           # 现有领域
-└── order/          # 新增订单领域
+├── hello/           # Existing domain
+└── order/          # New order domain
     ├── domain/
     │   ├── entities/
     │   └── repositories/
@@ -186,70 +188,70 @@ internal/boundedcontexts/
         └── repositories/
 ```
 
-每个限界上下文独立维护，通过依赖注入集成。
+Each bounded context is independently maintained and integrated via dependency injection.
 
-## 技术栈
+## Tech Stack
 
-- **框架**: CloudWeGo (Kitex + Hertz)
-- **依赖注入**: Google Wire
-- **数据库**: GORM
-- **配置**: Viper
-- **验证**: go-playground/validator
+- **Framework**: CloudWeGo (Kitex + Hertz)
+- **Dependency Injection**: Google Wire
+- **Database**: GORM
+- **Configuration**: Viper
+- **Validation**: go-playground/validator
 
-## 常用命令
+## Common Commands
 
 ```bash
-make init    # 初始化项目
-make api     # 生成Protocol Buffer代码
-make gen     # 生成Wire依赖注入代码
-make run     # 运行服务
-make test    # 运行测试
-make lint    # 代码检查
-make clean   # 清理生成的文件
+make init    # Initialize project
+make api     # Generate Protocol Buffer code
+make gen     # Generate Wire dependency injection code
+make run     # Run service
+make test    # Run tests
+make lint    # Run linter
+make clean   # Clean generated files
 ```
 
-## 项目结构说明
+## Project Structure
 
-- `cmd/`: 应用入口，Wire依赖注入配置
-- `api/`: Protocol Buffer定义和生成代码
-- `internal/`: 内部代码（不对外暴露）
-  - `boundedcontexts/`: DDD限界上下文
-  - `di/`: 依赖注入提供者
-  - `server/`: 服务器启动和配置
-  - `service/`: 服务注册（委托给handlers）
-  - `config/`: 配置管理
-  - `middleware/`: 中间件
-- `configs/`: 配置文件
-- `scripts/`: 工具脚本
+- `cmd/`: Application entry point, Wire DI configuration
+- `api/`: Protocol Buffer definitions and generated code
+- `internal/`: Internal code (not exposed)
+  - `boundedcontexts/`: DDD bounded contexts
+  - `di/`: Dependency injection providers
+  - `server/`: Server startup and configuration
+  - `service/`: Service registration (delegates to handlers)
+  - `config/`: Configuration management
+  - `middleware/`: Middleware
+- `configs/`: Configuration files
+- `scripts/`: Utility scripts
 
-## 设计原则
+## Design Principles
 
-1. **关注点分离**: 业务逻辑与技术实现分离
-2. **依赖倒置**: 领域层不依赖基础设施层
-3. **单一职责**: 每个组件只负责一件事
-4. **协议无关**: 业务逻辑可同时支持HTTP和gRPC
+1. **Separation of Concerns**: Business logic separated from technical implementation
+2. **Dependency Inversion**: Domain layer doesn't depend on infrastructure layer
+3. **Single Responsibility**: Each component has one responsibility
+4. **Protocol Agnostic**: Business logic supports both HTTP and gRPC
 
-## 扩展建议
+## Extension Suggestions
 
-本脚手架提供基础架构，开发者可按需添加：
+This scaffold provides basic architecture. Developers can add as needed:
 
-- **缓存层**: Redis缓存实现
-- **消息队列**: Kafka/RabbitMQ集成
-- **服务发现**: Consul/Etcd集成
-- **链路追踪**: OpenTelemetry集成
-- **熔断降级**: Hystrix模式实现
-- **API网关**: Kong/Traefik集成
+- **Cache Layer**: Redis cache implementation
+- **Message Queue**: Kafka/RabbitMQ integration
+- **Service Discovery**: Consul/Etcd integration
+- **Distributed Tracing**: OpenTelemetry integration
+- **Circuit Breaker**: Hystrix pattern implementation
+- **API Gateway**: Kong/Traefik integration
 
 ## FAQ
 
-**Q: 为什么service层只做委托？**
-A: service层负责服务注册和协议转换，业务逻辑统一在handlers中实现，便于HTTP和gRPC共享。
+**Q: Why does the service layer only delegate?**
+A: The service layer handles service registration and protocol conversion. Business logic is unified in handlers for HTTP and gRPC sharing.
 
-**Q: 如何添加数据库迁移？**
-A: 在`internal/boundedcontexts/xxx/infrastructure/migrations/`目录添加迁移文件。
+**Q: How to add database migrations?**
+A: Add migration files in the `internal/boundedcontexts/xxx/infrastructure/migrations/` directory.
 
-**Q: 如何处理跨领域通信？**
-A: 通过应用层的服务接口进行通信，避免领域间直接依赖。
+**Q: How to handle cross-domain communication?**
+A: Communicate through application layer service interfaces, avoid direct dependencies between domains.
 
 ## License
 
